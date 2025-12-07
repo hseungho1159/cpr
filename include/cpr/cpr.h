@@ -42,6 +42,11 @@
 #include "cpr/user_agent.h"
 #include "cpr/util.h"
 #include "cpr/verbose.h"
+#include "cpr/coroutine/coroutine.h"
+#include "cpr/coroutine/fire_once_event.h"
+#include "cpr/coroutine/sync_wait.h"
+#include "cpr/coroutine/task.h"
+#include "cpr/coroutine/awaiter_traits.h"
 
 #define CPR_LIBCURL_VERSION_NUM LIBCURL_VERSION_NUM
 

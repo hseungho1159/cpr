@@ -72,6 +72,7 @@ add_cpr_test(threadpool)
 add_cpr_test(testUtils)
 add_cpr_test(connection_pool)
 add_cpr_test(sse)
+add_cpr_test(coroutine)
 
 if (ENABLE_SSL_TESTS)
     add_cpr_test(ssl)

@@ -854,6 +854,52 @@ AsyncResponse Session::PutAsync() {
     return async([shared_this = GetSharedPtrFromThis()]() { return shared_this->Put(); });
 }
 
+// Functions with coroutines.
+coroutine::Task<cpr::Response> Session::CoGetAsync()
+{
+    co_return ([shared_this = GetSharedPtrFromThis()]() { return shared_this->Get(); })();
+}
+
+coroutine::Task<cpr::Response> Session::CoDeleteAsync()
+{
+    co_return ([shared_this = GetSharedPtrFromThis()]() { return shared_this->Delete(); })();
+}
+
+coroutine::Task<cpr::Response> Session::CoDownloadAsync(const WriteCallback& write)
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), write]() { return shared_this->Download(write); })();
+}
+
+coroutine::Task<cpr::Response> Session::CoDownloadAsync(std::ofstream& file)
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), &file]() { return shared_this->Download(file); })();
+}
+
+coroutine::Task<cpr::Response> Session::CoPostAsync()
+{
+    co_return ([shared_this = GetSharedPtrFromThis()]() { return shared_this->Post(); })();
+}
+
+coroutine::Task<cpr::Response> Session::CoHeadAsync()
+{
+    co_return ([shared_this = GetSharedPtrFromThis()]() { return shared_this->Head(); })();
+}
+
+coroutine::Task<cpr::Response> Session::CoOptionsAsync()
+{
+    co_return ([shared_this = GetSharedPtrFromThis()]() { return shared_this->Options(); })();
+}
+
+coroutine::Task<cpr::Response> Session::CoPatchAsync()
+{
+    co_return ([shared_this = GetSharedPtrFromThis()]() { return shared_this->Patch(); })();
+}
+
+coroutine::Task<cpr::Response> Session::CoPutAsync()
+{
+    co_return ([shared_this = GetSharedPtrFromThis()]() { return shared_this->Put(); })();
+}
+
 std::shared_ptr<CurlHolder> Session::GetCurlHolder() {
     return curl_;
 }

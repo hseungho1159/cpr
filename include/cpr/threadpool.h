@@ -93,6 +93,26 @@ class ThreadPool {
         return future;
     }
 
+    // Submits a callback and returns nothing.
+    // Mainly used for a callback that would resume some coroutines.
+    template <typename Callable>
+    void CoSubmit(Callable&& callable)
+    {
+        if (status == STOP) {
+            Start();
+        }
+        if (idle_thread_num <= 0 && cur_thread_num < max_thread_num) {
+            CreateThread();
+        }
+        
+        {
+            std::lock_guard<std::mutex> locker(task_mutex);
+            tasks.emplace(std::forward<Callable>(callable));
+        }
+        
+        task_cond.notify_one();
+    }
+
   private:
     bool CreateThread();
     void AddThread(const std::shared_ptr<std::thread>& thread);

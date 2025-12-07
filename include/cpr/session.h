@@ -217,6 +217,32 @@ class Session : public std::enable_shared_from_this<Session> {
     AsyncResponse PostAsync();
     AsyncResponse PutAsync();
 
+// Functions with C++20 Coroutines.
+    coroutine::Task<cpr::Response> CoGetAsync();
+    coroutine::Task<cpr::Response> CoDeleteAsync();
+    coroutine::Task<cpr::Response> CoDownloadAsync(const WriteCallback& write);
+    coroutine::Task<cpr::Response> CoDownloadAsync(std::ofstream& file);
+    coroutine::Task<cpr::Response> CoHeadAsync();
+    coroutine::Task<cpr::Response> CoOptionsAsync();
+    coroutine::Task<cpr::Response> CoPatchAsync();
+    coroutine::Task<cpr::Response> CoPostAsync();
+    coroutine::Task<cpr::Response> CoPutAsync();
+
+    template <typename Then>
+    auto CoGetCallback(Then then)     -> cpr::coroutine::Task<std::invoke_result_t<Then, cpr::Response>>;
+    template <typename Then>
+    auto CoPostCallback(Then then)    -> cpr::coroutine::Task<std::invoke_result_t<Then, cpr::Response>>;
+    template <typename Then>
+    auto CoPutCallback(Then then)     -> cpr::coroutine::Task<std::invoke_result_t<Then, cpr::Response>>;
+    template <typename Then>
+    auto CoHeadCallback(Then then)    -> cpr::coroutine::Task<std::invoke_result_t<Then, cpr::Response>>;
+    template <typename Then>
+    auto CoDeleteCallback(Then then)  -> cpr::coroutine::Task<std::invoke_result_t<Then, cpr::Response>>;
+    template <typename Then>
+    auto CoOptionsCallback(Then then) -> cpr::coroutine::Task<std::invoke_result_t<Then, cpr::Response>>;
+    template <typename Then>
+    auto CoPatchCallback(Then then)   -> cpr::coroutine::Task<std::invoke_result_t<Then, cpr::Response>>;
+
     template <typename Then>
     auto GetCallback(Then then);
     template <typename Then>
@@ -231,6 +257,8 @@ class Session : public std::enable_shared_from_this<Session> {
     auto OptionsCallback(Then then);
     template <typename Then>
     auto PatchCallback(Then then);
+
+    
 
     std::shared_ptr<CurlHolder> GetCurlHolder();
     std::string GetFullRequestUrl();
@@ -361,6 +389,48 @@ template <typename Then>
 auto Session::PatchCallback(Then then) {
     return async([shared_this = GetSharedPtrFromThis()](Then then_inner) { return then_inner(shared_this->Patch()); }, std::move(then));
 }
+
+// Coroutines
+#if __cplusplus >= 202002L
+
+template <typename Then>
+auto Session::CoGetCallback(Then then) -> coroutine::Task<std::invoke_result_t<Then, cpr::Response>>
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), then = std::move(then)]() { return then(shared_this->Get()); })();
+}
+
+template <typename Then>
+auto Session::CoPostCallback(Then then) -> coroutine::Task<std::invoke_result_t<Then, cpr::Response>>
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), then = std::move(then)]() { return then(shared_this->Post()); })();
+}
+template <typename Then>
+auto Session::CoPutCallback(Then then) -> coroutine::Task<std::invoke_result_t<Then, cpr::Response>>
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), then = std::move(then)]() { return then(shared_this->Put()); })();
+}
+template <typename Then>
+auto Session::CoHeadCallback(Then then) -> coroutine::Task<std::invoke_result_t<Then, cpr::Response>>
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), then = std::move(then)]() { return then(shared_this->Head()); })();
+}
+template <typename Then>
+auto Session::CoDeleteCallback(Then then) -> coroutine::Task<std::invoke_result_t<Then, cpr::Response>>
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), then = std::move(then)]() { return then(shared_this->Delete()); })();
+}
+template <typename Then>
+auto Session::CoOptionsCallback(Then then) -> coroutine::Task<std::invoke_result_t<Then, cpr::Response>>
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), then = std::move(then)]() { return then(shared_this->Options()); })();
+}
+template <typename Then>
+auto Session::CoPatchCallback(Then then) -> coroutine::Task<std::invoke_result_t<Then, cpr::Response>>
+{
+    co_return ([shared_this = GetSharedPtrFromThis(), then = std::move(then)]() { return then(shared_this->Patch()); })();
+}
+
+#endif // __cplusplus >= 202002L
 
 } // namespace cpr
 

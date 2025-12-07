@@ -22,14 +22,16 @@ endif()
 # Avoid the dll boilerplate code for windows
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+# Changed 17 -> 20
 if (PARENT_CXX_STANDARD)
     # Don't set CMAKE_CXX_STANDARD if it is already set by parent project
-    if (PARENT_CXX_STANDARD LESS 17)
-        message(FATAL_ERROR "cpr ${cpr_VERSION} does not support ${PARENT_CXX_STANDARD}. Please use cpr <= 1.9.x")
+    if (PARENT_CXX_STANDARD LESS 20)
+        message(FATAL_ERROR "This cpr is in developing for C++20.")
+        # message(FATAL_ERROR "cpr ${cpr_VERSION} does not support ${PARENT_CXX_STANDARD}. Please use cpr <= 1.9.x")
     endif()
 else()
     # Set standard version if not already set by potential parent project
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 20)
 endif()
 
 message(STATUS "CXX standard: ${CMAKE_CXX_STANDARD}")

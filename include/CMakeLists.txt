@@ -51,6 +51,11 @@ target_sources(cpr PRIVATE
     cpr/curlmultiholder.h
     cpr/multiperform.h
     cpr/resolve.h
+    cpr/coroutine/coroutine.h
+    cpr/coroutine/synchronization_event.h
+    cpr/coroutine/sync_wait.h
+    cpr/coroutine/task.h
+    cpr/coroutine/awaiter_traits.h
     ${PROJECT_BINARY_DIR}/cpr_generated_includes/cpr/cprver.h
 )
 
